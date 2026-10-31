@@ -149,13 +149,13 @@ class Articulo {
       };
 };
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-let listaPreciosArticulosStorage = (JSON.parse(localStorage.getItem("listaPrecioArticulos")) == null) ? ([]) : JSON.parse(localStorage.getItem("listaPrecioArticulos"));
+/*let listaPreciosArticulosStorage = (JSON.parse(localStorage.getItem("listaPrecioArticulos")) == null) ? ([]) : JSON.parse(localStorage.getItem("listaPrecioArticulos"));
 if (listaPreciosArticulosStorage.length > 0) {
    localStorage.setItem("listaPrecioArticulos", JSON.stringify([...listaPreciosArticulosStorage]));
    listaPrecioArticulos = [...listaPreciosArticulosStorage];
 } else {
    localStorage.setItem("listaPrecioArticulos", JSON.stringify([...listaPrecioArticulos]));
-};
+};*/
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 let carritoComprasStorage = (JSON.parse(localStorage.getItem("carritoCompras")) == null) ? ([]) : JSON.parse(localStorage.getItem("carritoCompras"));
 if (carritoComprasStorage.length > 0) {
@@ -182,12 +182,13 @@ document.getElementById("idCrearArticuloPrecio").value = localStorage.getItem("i
 document.getElementById("idBuscarArticuloCategoria").value = localStorage.getItem("idBuscarArticuloCategoria");
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
+
 function crearMensajeDialog({tipo, texto}){
     //
     let titulo;
     let htmlContenido;
     //
-    tipo === "exito" ? titulo="✔ Correcto" : titulo="❌ Error";
+    tipo === "exito" ? titulo ="✔ Correcto" : titulo="❌ Error";
     //
     const tagDialog = document.createElement("dialog");
     tagDialog.id = "idMensajeDialog";
@@ -738,3 +739,66 @@ tagInputCrearArticuloPrecio.addEventListener("input",()=>localStorage.setItem("i
 const tagInputBuscarArticuloCategoria = document.getElementById("idBuscarArticuloCategoria");
 tagInputBuscarArticuloCategoria.addEventListener("input",()=>localStorage.setItem("idBuscarArticuloCategoria",document.getElementById("idBuscarArticuloCategoria").value));
 //
+
+function crearMensajeAviso(texto){
+    //
+    let htmlContenido;
+    //
+    //
+    const tagDiv = document.createElement("div");
+    tagDiv.id = "idMensajeAviso";
+    tagDiv.className = "mensajeAviso";
+    //
+    htmlContenido = `<p class="mensajeDialogP">${texto}</p>`;
+    //                        
+    tagDiv.innerHTML = htmlContenido;
+    document.body.appendChild(tagDiv);
+    //
+    setTimeout(()=>{tagDiv.remove();},3000);
+};
+//
+function peticionConexion(){
+  
+  crearMensajeAviso("Realizando conexion y cargando Datos");
+  return new Promise((resolve,reject) => {
+     setTimeout(()=> {
+        const conexion = true;
+        //
+        if (conexion){
+          //
+           resolve(true);
+        } else {
+           reject(false);
+        }
+        //
+     },5000)
+  })
+}
+
+async function inicioModulo(){
+  //
+  try {
+  const conectado = await peticionConexion();
+       if (conectado) {
+          //
+          crearMensajeAviso("Cargando Datos");
+          //
+          let listaPreciosArticulosStorage = (JSON.parse(localStorage.getItem("listaPrecioArticulos")) == null) ? ([]) : JSON.parse(localStorage.getItem("listaPrecioArticulos"));
+          //
+          console.log("0010")
+          if (listaPreciosArticulosStorage.length > 0) {
+             localStorage.setItem("listaPrecioArticulos", JSON.stringify([...listaPreciosArticulosStorage]));
+             listaPrecioArticulos = [...listaPreciosArticulosStorage];
+          } else {
+            localStorage.setItem("listaPrecioArticulos", JSON.stringify([...listaPrecioArticulos]));
+          };
+    }
+      //
+  } catch (error) {
+     crearMensajeDialog({tipo: "error", texto: "No se logro cargar los articulos"})
+  } finally {
+    crearMensajeAviso("Bienvenidos al Modulo de Compras");
+  }
+};
+
+inicioModulo();
