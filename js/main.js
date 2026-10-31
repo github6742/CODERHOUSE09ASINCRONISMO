@@ -1,4 +1,3 @@
-//const listaPrecioArticulos = [
 let listaPrecioArticulos = [];
 //
 listaPrecioArticulos = [
@@ -149,8 +148,7 @@ class Articulo {
         this.precio = precio;
       };
 };
-//
-////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
 let listaPreciosArticulosStorage = (JSON.parse(localStorage.getItem("listaPrecioArticulos")) == null) ? ([]) : JSON.parse(localStorage.getItem("listaPrecioArticulos"));
 if (listaPreciosArticulosStorage.length > 0) {
    localStorage.setItem("listaPrecioArticulos", JSON.stringify([...listaPreciosArticulosStorage]));
@@ -174,14 +172,16 @@ if (articulosEncontradosStorage.length > 0) {
 }
 //
 articulosEncontrados.length > 0 && buscarArticulosHtml(articulosEncontrados);
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
 document.getElementById("idCrearArticuloCodigo").value = localStorage.getItem("idCrearArticuloCodigo");
 document.getElementById("idCrearArticuloNombre").value = localStorage.getItem("idCrearArticuloNombre");
 document.getElementById("idCrearArticuloMarca").value = localStorage.getItem("idCrearArticuloMarca");
 document.getElementById("idCrearArticuloCategoria").value = localStorage.getItem("idCrearArticuloCategoria") || "";
 document.getElementById("idCrearArticuloPrecio").value = localStorage.getItem("idCrearArticuloPrecio");
 document.getElementById("idBuscarArticuloCategoria").value = localStorage.getItem("idBuscarArticuloCategoria");
-////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
 function crearMensajeDialog({tipo, texto}){
     //
     let titulo;
@@ -192,22 +192,25 @@ function crearMensajeDialog({tipo, texto}){
     const tagDialog = document.createElement("dialog");
     tagDialog.id = "idMensajeDialog";
     tagDialog.className = "mensajeDialog";
+    //
     htmlContenido = `<h3 class="mensajeDialogH3">${titulo}</h3>
                         <p class="mensajeDialogP">${texto}</p>
-                        <button id="idMensajeDialogButton" class="buttonGlobal">Aceptar</button>`;;
+                        <button id="idMensajeDialogButton" class="buttonGlobal">Aceptar</button>`;
+    //                        
     tagDialog.innerHTML = htmlContenido;
     document.body.appendChild(tagDialog);
-    tagDialog.showModal();       
+    tagDialog.showModal();     
+    //  
     const tagMensajeDialogButton = document.getElementById("idMensajeDialogButton");
-    tagMensajeDialogButton.addEventListener("click", 
-                                      function() {
-                                                   tagDialog.close();
-                                                   tagDialog.remove();
-                                                  });                                           
+    //
+    (tagMensajeDialogButton) && (tagMensajeDialogButton.addEventListener("click", function() {tagDialog.close();tagDialog.remove();}));
+    //
 };
-//
+
 function cargarArticulo(e){
+  //
   e.preventDefault();
+  //
   const codigo = document.getElementById("idCrearArticuloCodigo").value;
   const nombre = document.getElementById("idCrearArticuloNombre").value;
   const marca = document.getElementById("idCrearArticuloMarca").value;
@@ -219,21 +222,25 @@ function cargarArticulo(e){
   } else if (listaPrecioArticulos.some(articulo => articulo.nombre.toUpperCase() == nombre.toUpperCase() )){
      crearMensajeDialog({tipo:"error", texto:"Ya existe un articulo con ese nombre"});
   } else {
+     //
      const id = listaPrecioArticulos.length + 1;  
+     //
      const articuloNuevo = new Articulo(id, 
                                         codigo.toUpperCase(), 
                                         nombre.toUpperCase(), 
                                         marca.toUpperCase(), 
                                         categoria.toUpperCase(), 
                                         parseFloat(precio));
+     //
      const elementoNuevo = {
-     id: articuloNuevo.id, 
-     codigo: articuloNuevo.codigo,
-     nombre: articuloNuevo.nombre,
-     marca: articuloNuevo.marca,
-     categoria: articuloNuevo.categoria,
-     precio: articuloNuevo.precio
+           id: articuloNuevo.id, 
+           codigo: articuloNuevo.codigo,
+           nombre: articuloNuevo.nombre,
+           marca: articuloNuevo.marca,
+           categoria: articuloNuevo.categoria,
+           precio: articuloNuevo.precio
      };
+     //
      listaPrecioArticulos.push(elementoNuevo);
      //
      localStorage.setItem("listaPrecioArticulos", JSON.stringify(listaPrecioArticulos));
@@ -255,134 +262,60 @@ function cargarArticulo(e){
   }
   //
 }
-//
-function crearCard(articulo){
-  //
-  let cantidadArticulo; 
-  let precioArticuloTotal;
-  //
-  if (articulo.cantidad == undefined) {
-    cantidadArticulo = 1;
-    precioArticuloTotal = articulo.precio*cantidadArticulo;
-  } else {
-    cantidadArticulo = articulo.cantidad;
-    precioArticuloTotal = articulo.totalArticulo;
-  }
-  //
-  return ` <div class="contenedorCard">
-              <div class="contenedorCardDatos">
-                <div class="contenedorCardDatosFila">
-                     <p class="cardDatosFilaEtiqueta">Id:</p><p class="cardDatosFilaValor">${articulo.id}</p>
-                </div>
-                <div class="contenedorCardDatosFila">
-                     <p class="cardDatosFilaEtiqueta">Codigo:</p><p class="cardDatosFilaValor">${articulo.codigo.toUpperCase()}</p>
-                </div>
-                <div class="contenedorCardDatosFila">
-                     <p class="cardDatosFilaEtiqueta">Nombre:</p><p class="cardDatosFilaValor">${articulo.nombre.toUpperCase()}</p>
-                </div>
-                <div class="contenedorCardDatosFila">
-                     <p class="cardDatosFilaEtiqueta">Marca:</p><p class="cardDatosFilaValor">${articulo.marca.toUpperCase()}</p>
-                </div>
-                <div class="contenedorCardDatosFila">
-                     <p class="cardDatosFilaEtiqueta">Precio:</p><p class="cardDatosFilaValor">$${articulo.precio}</p>  
-                </div>
-              </div>
-              <div id="idResultadoCantidadDiv${articulo.id}" class="resultadoCantidadDiv">
-                  <label class="labelCard" for="idResultadoCantidadInput${articulo.id}" >Cantidad: </label>            
-                  <input id="idResultadoCantidadInput${articulo.id}" class="inputCard" type="number" min=1 max=1000 value=${cantidadArticulo} required>
-              </div> 
-              <div class="contenedorCardDatosFila">
-                   <p id="idTotalArticuloBuscado${articulo.id}" class="labelCard">Importe Total: $${precioArticuloTotal}</p>
-              </div>
-              <div class="contenedorCardDatosBoton">
-                <button id="idResultadosBotonAgregar${articulo.id}" class="buttonCard">AGREGAR</button>
-              </div>  
-            </div>
-            `;
-  //
-};
-//
-function crearCardCarrito(articulo){
-  //
-  return ` <div class="contenedorCard">
-              <div class="contenedorCardDatos">
-                <div class="contenedorCardDatosFila">
-                     <p class="cardDatosFilaEtiqueta">Id:</p><p class="cardDatosFilaValor">${articulo.id}</p>
-                </div>
-                <div class="contenedorCardDatosFila">
-                     <p class="cardDatosFilaEtiqueta">Codigo:</p><p class="cardDatosFilaValor">${articulo.codigo.toUpperCase()}</p>
-                </div>
-                <div class="contenedorCardDatosFila">
-                     <p class="cardDatosFilaEtiqueta">Nombre:</p><p class="cardDatosFilaValor">${articulo.nombre.toUpperCase()}</p>
-                </div>
-                <div class="contenedorCardDatosFila">
-                     <p class="cardDatosFilaEtiqueta">Marca:</p><p class="cardDatosFilaValor">${articulo.marca.toUpperCase()}</p>
-                </div>
-                <div class="contenedorCardDatosFila">
-                     <p class="cardDatosFilaEtiqueta">Precio:</p><p class="cardDatosFilaValor">$${articulo.precio}</p>  
-                </div>
-              </div>
-              <div id="idCarritoComprasCantidadDiv${articulo.id}" class="carritoComprasCantidadDiv">
-                  <label class="labelCard" for="idCarritoComprasCantidadInput${articulo.id}" >Cantidad: </label>            
-                  <input id="idCarritoComprasCantidadInput${articulo.id}" class="inputCard" type="number" min=1 max=1000 value=${articulo.cantidad} required>
-              </div> 
-              <div class="contenedorCardDatosFila">
-                   <p id="idTotalArticuloComprado${articulo.id}" class="labelCard">Importe Total: $${articulo.precio*articulo.cantidad}</p>
-              </div>
-              <div class="contenedorCardDatosBoton">
-                <button id="idCarritoComprasBotonEliminar${articulo.id}" class="buttonCard">ELIMINAR</button>                
-              </div>  
-            </div>
-            `;
-} 
 
-function eliminarDelCarrito(e, articuloId){
-  e.preventDefault();
-  let totalCarrito;
-  //const articuloId = e.target.dataset.articuloId;
+function eliminarDelCarritoDatos(articuloId){
   //
-  //const indice = carritoCompras.findIndex(articulo => articulo.id == articuloId);
-  //carritoCompras.splice(indice,1);}
-  console.log("eliminarDelCarrito-articuloId: " + articuloId)
-  //console.log(carritoCompras);
-  console.log("*******************************************")
   carritoCompras = carritoCompras.filter((articulo) => articulo.id != articuloId);
-  //console.log(carritoCompras);
-  //console.log("*******************************************")
+  localStorage.setItem("carritoCompras", JSON.stringify(carritoCompras));
+  //
+}
+
+function eliminarDelCarritoHtml(articuloId){
   //
   const tagIdMainCarritoCompras = document.getElementById("idMainCarritoCompras");
-  const idIdCarritoComprasArticulo = document.getElementById("idCarritoComprasArticulo"+articuloId);
+  const tagIdCarritoComprasArticulo = document.getElementById("idCarritoComprasArticulo"+articuloId);
+  const tagIdTotalCarrito = document.getElementById("idTotalCarrito");
   //
-  (tagIdMainCarritoCompras && idIdCarritoComprasArticulo) && tagIdMainCarritoCompras.removeChild(idIdCarritoComprasArticulo);
+  (tagIdMainCarritoCompras && tagIdCarritoComprasArticulo) && tagIdMainCarritoCompras.removeChild(tagIdCarritoComprasArticulo);
+  // 
+  if (tagIdTotalCarrito) {
+     let totalCarrito = carritoCompras.reduce((sumador,articulo)  => sumador + (parseInt(articulo.precio)*parseInt(articulo.cantidad)),0);
+     tagIdTotalCarrito.innerText = `Total del Carrito de Compras: $${parseInt(totalCarrito)}`;
+  }
   //
   crearMensajeDialog({tipo: "exito", texto: "El articulo fue eliminado"});
-  //     
-  //if (document.getElementById("idMainCarritoComprasTotalArticulo")) {
-  if (document.getElementById("idTotalCarrito")) {
-     totalCarrito = carritoCompras.reduce((sumador,articulo)  => sumador + (parseInt(articulo.precio)*parseInt(articulo.cantidad)),0);
-     document.getElementById("idTotalCarrito").innerText = `Total del carrito de compras: $${totalCarrito}`;
-  }
-  //  
-  localStorage.setItem("carritoCompras", JSON.stringify(carritoCompras));
+  //   
 }
-//
-function agregarListaArticulosHtml(lista){
-  //console.log("agregarListaArticulosHtml(lista): " + lista)
-  lista.forEach(articulo => agregarArticuloHtml(articulo));
-}
-//
-function agregarArticuloHtml(articulo){
+
+function eliminarDelCarrito(e, articuloId){
   //
+  e.preventDefault();
+  eliminarDelCarritoDatos(articuloId);
+  eliminarDelCarritoHtml(articuloId);
+  //
+}
+
+function agregarListaArticulosHtml(lista){
+  //
+  lista.forEach(articulo => {agregarArticuloHtml(articulo.id)});
+  //
+}
+         
+function agregarArticuloHtml(articuloId){
+  //
+  let totalCarrito;
   let contenidoHtml;
   const tagMainCarritoCompras = document.getElementById("idMainCarritoCompras");
-  const tagDivArticulo = document.createElement("div");
-  tagDivArticulo.id = "idCarritoComprasArticulo"+articulo.id;
-  tagDivArticulo.className = "carritoComprasArticulo";
-  tagMainCarritoCompras.appendChild(tagDivArticulo); 
-  //tagDivArticulo.innerHTML = crearCardCarrito(articulo);
-  //tagDivArticulo.innerHTML = ` <div class="contenedorCard">
-//console.log(articulo)
-  contenidoHtml = ` <div class="contenedorCard">
+  const articulo = carritoCompras.find(articulo => articulo.id == articuloId);
+  //
+  if (tagMainCarritoCompras) {
+     //
+     const tagDivArticulo = document.createElement("div");
+     tagDivArticulo.id = "idCarritoComprasArticulo"+articulo.id;
+     tagDivArticulo.className = "carritoComprasArticulo";
+     tagMainCarritoCompras.appendChild(tagDivArticulo); 
+     //
+     contenidoHtml = ` <div class="contenedorCard">
               <div class="contenedorCardDatos"> 
               
                 <div class="contenedorCardDatosFila">
@@ -414,75 +347,121 @@ function agregarArticuloHtml(articulo){
             </div>
             </div>
             `;
-            //console.log(contenidoHtml)
-            tagDivArticulo.innerHTML = contenidoHtml;
-  //tagMainCarritoCompras.appendChild(tagDivArticulo); 
+     //       
+     tagDivArticulo.innerHTML = contenidoHtml;     
+     //
+  }
   //
-  let totalCarrito = carritoCompras.reduce((sumador,articulocc)  => sumador + (parseInt(articulocc.precio)*parseInt(articulocc.cantidad)),0);  
-  document.getElementById("idTotalCarrito").innerText="Importe Total Carrito: $"+(totalCarrito);
+  const tagIdTotalCarrito = document.getElementById("idTotalCarrito");
+  //
+  if (tagIdTotalCarrito) {
+     totalCarrito = carritoCompras.reduce((sumador,articulocc)  => sumador + (parseInt(articulocc.precio)*parseInt(articulocc.cantidad)),0);  
+     tagIdTotalCarrito.innerText="Importe Total Carrito: $"+(totalCarrito);
+  }     
   //
   const tagBotonEliminar = document.getElementById("idCarritoComprasBotonEliminar"+articulo.id);
-  //tagBotonEliminar.dataset.articuloId = articulo.id;
-  //tagBotonEliminar.addEventListener("click",eliminarDelCarrito);
-  tagBotonEliminar.addEventListener("click", (e) => eliminarDelCarrito(e,articulo.id));
+  //
+  (tagBotonEliminar) && (tagBotonEliminar.addEventListener("click", (e) => eliminarDelCarrito(e,articulo.id)));
   //
   const tagInputCantidad = document.getElementById("idCarritoComprasCantidadInput"+articulo.id);
-        tagInputCantidad.addEventListener("input",(e) => {
+  //
+  if (tagInputCantidad) {
+     //
+     tagInputCantidad.addEventListener("input",(e) => {
+            //
             e.preventDefault();
             articulo.cantidad = parseInt(tagInputCantidad.value);
             articulo.totalArticulo = parseInt(tagInputCantidad.value)*parseInt(articulo.precio);
-            document.getElementById("idTotalArticuloComprado"+articulo.id).innerText="Importe Total: $"+(parseInt(tagInputCantidad.value)*parseInt(articulo.precio));
-            totalCarrito = carritoCompras.reduce((sumador,articulocc)  => sumador + (parseInt(articulocc.precio)*parseInt(articulocc.cantidad)),0);  
-            document.getElementById("idTotalCarrito").innerText="Importe Total Carrito: $"+(parseInt(totalCarrito));
-            localStorage.setItem("carritoCompras", JSON.stringify(carritoCompras));
-          });
-}
-//
-function agregarAlCarrito(e,articuloId){
-  e.preventDefault();
-  //const articuloId = e.target.dataset.articuloId;
-  const cantidad = document.getElementById("idResultadoCantidadInput"+articuloId).value;
+            //
+            const tagIdTotalArticuloComprado = document.getElementById("idTotalArticuloComprado"+articulo.id);
+            //
+            (tagIdTotalArticuloComprado) && (tagIdTotalArticuloComprado.innerText="Importe Total: $"+(parseInt(tagInputCantidad.value)*parseInt(articulo.precio)));
+            //
+            const tagIdTotalCarrito = document.getElementById("idTotalCarrito");
+            //
+            if (tagIdTotalCarrito) {
+               //
+               totalCarrito = carritoCompras.reduce((sumador,articulocc)  => sumador + (parseInt(articulocc.precio)*parseInt(articulocc.cantidad)),0);  
+               tagIdTotalCarrito.innerText="Importe Total Carrito: $"+(parseInt(totalCarrito));
+               //
+            }
+            //
+     });
+  }
   //
+  localStorage.setItem("carritoCompras", JSON.stringify(carritoCompras));
+  //
+}
+
+function agregarAlCarritoDatos(articuloId){
+  //
+  const articulo = listaPrecioArticulos.find(articulo => parseInt(articulo.id) === parseInt(articuloId));
+  //
+  const tagIdResultadoCantidadInput = document.getElementById("idResultadoCantidadInput"+articuloId);
+  //
+  if (tagIdResultadoCantidadInput) {
+    //
+    let cantidad = tagIdResultadoCantidadInput.value;
+    //
+    articulo.cantidad = parseInt(cantidad);
+    articulo.totalArticulo = parseInt(articulo.precio)*parseInt(cantidad);
+    //
+    carritoCompras.push(articulo);
+    localStorage.setItem("carritoCompras", JSON.stringify(carritoCompras));
+    //
+  };
+  //
+  crearMensajeDialog({tipo: "exito", texto: "El articulo fue agregado"});   
+  //  
+}
+
+function agregarAlCarritoHtml(articuloId){
+  //
+  agregarArticuloHtml(articuloId);
+  //
+}
+
+function agregarAlCarrito(e,articuloId){
+  //
+  e.preventDefault();
+  //  
   if (carritoCompras.some(articulo => parseInt(articulo.id) === parseInt(articuloId))) {
      crearMensajeDialog({tipo: "error", texto: "El articulo ya existe en el carrito de compras"});
   } else {
-     const articulo = listaPrecioArticulos.find(articulo => parseInt(articulo.id) === parseInt(articuloId));
-     articulo.cantidad = cantidad;
-     articulo.totalArticulo = articulo.precio*cantidad;
-     carritoCompras.push(articulo);
-     localStorage.setItem("carritoCompras", JSON.stringify(carritoCompras));
-     agregarArticuloHtml(articulo);
-     //
-     //
-     crearMensajeDialog({tipo: "exito", texto: "El articulo fue agregado"});                 
-  }  
+    //
+    agregarAlCarritoDatos(articuloId);
+    agregarAlCarritoHtml(articuloId);
+    //
+  }    
+  //
 }
-//
+
 function buscarArticulosHtml(lista){
   //
   let contenidoHtml;
   let tagDivArticuloEncontrado;
   const tagMainResultados = document.getElementById("idMainResultados");
-  tagMainResultados.innerHTML = ``;
   //
   if (tagMainResultados) {
-    //console.log(lista)
-      lista.forEach(lista => {
+    //
+    tagMainResultados.innerHTML = ``;
+    //
+    lista.forEach(lista => {
+        //
         tagDivArticuloEncontrado = document.createElement('div')
         tagDivArticuloEncontrado.id = "idArticuloEncontrado"+lista.id;
         tagDivArticuloEncontrado.className ="articuloEncontrado";
         tagMainResultados.appendChild(tagDivArticuloEncontrado);
-        //tag.innerHTML = crearCard(lista.articulo);
-                    
+        //                    
         let cantidadArticulo; 
         let precioArticuloTotal;
-              //
+        //
         if (lista.cantidad == undefined) {
             cantidadArticulo = 1;
-            precioArticuloTotal =lista.precio*cantidadArticulo;
+            precioArticuloTotal = parseInt(lista.precio)*parseInt(cantidadArticulo);
         } else {
-            cantidadArticulo = lista.cantidad;
-            precioArticuloTotal = lista.totalArticulo;
+            cantidadArticulo = parseInt(lista.cantidad);
+            precioArticuloTotal = parseInt(lista.totalArticulo);
         }
         //
         contenidoHtml = ` <div class="contenedorCard">
@@ -500,101 +479,104 @@ function buscarArticulosHtml(lista){
                                 <p class="cardDatosFilaEtiqueta">Marca:</p><p class="cardDatosFilaValor">${lista.marca.toUpperCase()}</p>
                             </div>
                             <div class="contenedorCardDatosFila">
-                                <p class="cardDatosFilaEtiqueta">Precio:</p><p class="cardDatosFilaValor">$${lista.precio}</p>  
+                                <p class="cardDatosFilaEtiqueta">Precio:</p><p class="cardDatosFilaValor">$${parseInt(lista.precio)}</p>  
                             </div>
                           </div>
                           <div id="idResultadoCantidadDiv${lista.id}" class="resultadoCantidadDiv">
                               <label class="labelCard" for="idResultadoCantidadInput${lista.id}" >Cantidad: </label>            
-                              <input id="idResultadoCantidadInput${lista.id}" class="inputCard" type="number" min=1 max=1000 value=${cantidadArticulo} required>
+                              <input id="idResultadoCantidadInput${lista.id}" class="inputCard" type="number" min=1 max=1000 value=${parseInt(cantidadArticulo)} required>
                           </div> 
                           <div class="contenedorCardDatosFila">
-                              <p id="idTotalArticuloBuscado${lista.id}" class="labelCard">Importe Total: $${precioArticuloTotal}</p>
+                              <p id="idTotalArticuloBuscado${lista.id}" class="labelCard">Importe Total: $${parseInt(precioArticuloTotal)}</p>
                           </div>
                           <div class="contenedorCardDatosBoton">
                             <button id="idResultadosBotonAgregar${lista.id}" class="buttonCard">AGREGAR</button>
                           </div>  
                         </div>
                         `;
+        //
         tagDivArticuloEncontrado.innerHTML = contenidoHtml;
-              //
-        //tagMainResultados.appendChild(tagDivArticuloEncontrado);
-        
-      });
+        //        
+    });
   };
   //
-  /*
-  let contenidoHtml = ``;
-  if (lista.length > 0){
-     lista.forEach(articulo => {
-        contenidoHtml += `
-                         <div id="idArticuloEncontrado${articulo.id}" class="articuloEncontrado">`;
-        contenidoHtml += crearCard(articulo);
-        contenidoHtml += `</div>`;
-        });
-  };
-  //
-  tagResultadoBusqueda.innerHTML = contenidoHtml;
-  */
-  //   
-  /********************************* */
-     lista.forEach(articulo => {
-          //  
-          const tagBotonAgregar = document.getElementById("idResultadosBotonAgregar"+articulo.id);
-          ////console.log("541-tabBotonAgregar: ")
-          //tagBotonAgregar.dataset.articuloId = articulo.id;
-          //tagBotonAgregar.addEventListener("click",agregarAlCarrito);
-          tagBotonAgregar.addEventListener("click", (e) => agregarAlCarrito(e,articulo.id))
-          //
-          const tagInputCantidad = document.getElementById("idResultadoCantidadInput"+articulo.id);
-          tagInputCantidad.addEventListener("input",(e) => {
+  lista.forEach(articulo => {
+      //  
+      const tagBotonAgregar = document.getElementById("idResultadosBotonAgregar"+articulo.id);
+      //
+      (tagBotonAgregar) && (tagBotonAgregar.addEventListener("click", (e) => agregarAlCarrito(e,articulo.id)));
+      //
+      const tagInputCantidad = document.getElementById("idResultadoCantidadInput"+articulo.id);
+      //
+      if (tagInputCantidad) {
+
+         tagInputCantidad.addEventListener("input",(e) => {
             e.preventDefault();
             articulo.cantidad = parseInt(tagInputCantidad.value)||1;
             articulo.totalArticulo = parseInt(tagInputCantidad.value) * parseInt(articulo.precio);
-            document.getElementById("idTotalArticuloBuscado"+articulo.id).innerText="Importe Total: $"+(parseInt(tagInputCantidad.value)*parseInt(articulo.precio));
+            //
+            const tagIdTotalArticuloBuscado = document.getElementById("idTotalArticuloBuscado"+articulo.id);
+            //
+            (tagIdTotalArticuloBuscado) && (tagIdTotalArticuloBuscado.innerText="Importe Total: $"+(parseInt(tagInputCantidad.value)*parseInt(articulo.precio)));
+            //
             localStorage.setItem("articulosEncontrados", JSON.stringify(lista));
-          });
-          //
-        });
-  };
-  /**********************/
+         });
+         //
+      }   
+      //
+  });
+};
 
 function buscarArticulo(e){
+  //
   e.preventDefault();
   //
-  const filtro = document.getElementById("idBuscarArticuloCategoria").value.toUpperCase();
+  const tagIdBuscarArticuloCategoria = document.getElementById("idBuscarArticuloCategoria");
   //
-  articulosEncontrados = filtro.length > 0  
-                         ? listaPrecioArticulos.filter(articulo => articulo.categoria.toUpperCase().includes(filtro.toUpperCase()))
-                         : [...listaPrecioArticulos];
-  //   
-  localStorage.setItem("articulosEncontrados",JSON.stringify(articulosEncontrados));
-  buscarArticulosHtml(articulosEncontrados);
-  //
-}  
-//
+  if (tagIdBuscarArticuloCategoria) {
+     //
+     const categoria = tagIdBuscarArticuloCategoria.value.toUpperCase();
+     //
+     articulosEncontrados = (categoria.length == 0) ? [...listaPrecioArticulos] :
+                            listaPrecioArticulos.filter(articulo => articulo.categoria.toUpperCase().includes(categoria.toUpperCase()));
+     //
+     localStorage.setItem("articulosEncontrados",JSON.stringify(articulosEncontrados));
+     //
+     buscarArticulosHtml(articulosEncontrados);
+    //
+   } 
+}
+
 function verCarritoCompras(e){
+  //
   e.preventDefault();
+  //
   localStorage.setItem("carritoComprasOculto","NO")
   let totalCarrito; 
+  //
   if ((carritoCompras.length === 0) ) {
-    crearMensajeDialog({tipo: "error", texto: "El carrito de compras esta vacio"});       
+     //
+     crearMensajeDialog({tipo: "error", texto: "El carrito de compras esta vacio"});       
+     //
   } else {
     //
-    
-    if (document.getElementById("idMainCarritoCompras").childElementCount === 0) {
+    const tagIdMainCarritoCompras = document.getElementById("idMainCarritoCompras");
+    //
+    if (tagIdMainCarritoCompras.childElementCount === 0) {
        //
        let contenidoHtml;
        let tagDivArticuloEncontrado;
-       const tagMainCarritoCompras = document.getElementById("idMainCarritoCompras");
-       tagMainCarritoCompras.innerHTML = ``;
+       tagIdMainCarritoCompras.innerHTML = ``;
        //
-       if (tagMainCarritoCompras) {
+       if (tagIdMainCarritoCompras) {
+          //
           carritoCompras.forEach(lista => {
+             //
              tagDivArticuloEncontrado = document.createElement('div')
              tagDivArticuloEncontrado.id = "idCarritoComprasArticulo"+lista.id;
              tagDivArticuloEncontrado.className ="articuloEncontrado";
-             tagMainCarritoCompras.appendChild(tagDivArticuloEncontrado);
-             //tag.innerHTML = crearCardCarrito(lista.articulo);
+             tagIdMainCarritoCompras.appendChild(tagDivArticuloEncontrado);
+             //
              contenidoHtml = ` <div class="contenedorCard">
               <div class="contenedorCardDatos">
                 <div class="contenedorCardDatosFila">
@@ -629,55 +611,47 @@ function verCarritoCompras(e){
           });
        };
        //
-      /*
-       carritoCompras.forEach(articulo =>{
-        contenidoHtml += `
-                         <div id="idCarritoComprasArticulo${articulo.id}" class="articuloEncontrado">`;
-        contenidoHtml += crearCardCarrito(articulo);
-        contenidoHtml += `</div>`;
-      });
-      //
-      document.getElementById("idMainCarritoCompras").innerHTML =contenidoHtml;
-      */
-      
-      //
       carritoCompras.forEach(articulo => {          
           //
           const tagBotonEliminar = document.getElementById("idCarritoComprasBotonEliminar"+articulo.id);
-          if (tagBotonEliminar) {
-          //tagBotonEliminar.dataset.articuloId = articulo.id;
-          //tagBotonEliminar.addEventListener("click",eliminarDelCarrito);
-          tagBotonEliminar.addEventListener("click", (e) => eliminarDelCarrito(e,articulo.id));
-          }
+          //
+          (tagBotonEliminar) && (tagBotonEliminar.addEventListener("click", (e) => eliminarDelCarrito(e,articulo.id)));
           //
           const tagInputCantidad = document.getElementById("idCarritoComprasCantidadInput"+articulo.id);
+          //
           if (tagInputCantidad) {
-          tagInputCantidad.addEventListener("input",(e) => {
-            e.preventDefault();
-            articulo.cantidad = parseInt(tagInputCantidad.value);
-            articulo.totalArticulo = parseInt(tagInputCantidad.value)*parseInt(articulo.precio);
-            localStorage.setItem("carritoCompras",JSON.stringify(carritoCompras))
-            document.getElementById("idTotalArticuloComprado"+articulo.id).innerText="Importe Total: $"+(parseInt(tagInputCantidad.value)*parseInt(articulo.precio));
-            totalCarrito = carritoCompras.reduce((sumador,articulocc)  => sumador + (parseInt(articulocc.precio)*parseInt(articulocc.cantidad)),0);  
-            document.getElementById("idTotalCarrito").innerText="Importe Total Carrito: $"+(totalCarrito);
-            //                                                           document.getElementById("idCarritoComprasCantidadInput"+articulo.id).value));
-          });
-        }
+             tagInputCantidad.addEventListener("input",(e) => {
+                //
+                articulo.cantidad = parseInt(tagInputCantidad.value);
+                articulo.totalArticulo = parseInt(tagInputCantidad.value)*parseInt(articulo.precio);
+                //
+                localStorage.setItem("carritoCompras",JSON.stringify(carritoCompras))
+                document.getElementById("idTotalArticuloComprado"+articulo.id).innerText="Importe Total: $"+(parseInt(tagInputCantidad.value)*parseInt(articulo.precio));
+                //
+                totalCarrito = carritoCompras.reduce((sumador,articulocc)  => sumador + (parseInt(articulocc.precio)*parseInt(articulocc.cantidad)),0);  
+                document.getElementById("idTotalCarrito").innerText="Importe Total Carrito: $"+(totalCarrito);
+               //                                                          
+             });
+          }
         });
+        //
         totalCarrito = carritoCompras.reduce((sumador,articulocc)  => sumador + (parseInt(articulocc.precio)*parseInt(articulocc.cantidad)),0); 
         document.getElementById("idTotalCarrito").innerText="Importe Total Carrito: $"+(parseInt(totalCarrito));
     }
   localStorage.setItem("carritoCompras", JSON.stringify(carritoCompras));
   }
 } 
-//
+
 function ocultarCarritoCompras(e){
+  //
   e.preventDefault();
   //
-  localStorage.setItem("carritoComprasOculto","SI")
-  if ((document.getElementById("idMainCarritoCompras").childElementCount === 0) && (carritoCompras.length > 0)){
+  localStorage.setItem("carritoComprasOculto","SI");
+  const tagIdMainCarritoCompras = document.getElementById("idMainCarritoCompras");
+  //
+  if ((tagIdMainCarritoCompras.childElementCount === 0) && (carritoCompras.length > 0)){
     crearMensajeDialog({tipo: "error", texto: "El carrito ya esta oculto"})
-  } else if ((document.getElementById("idMainCarritoCompras").childElementCount > 0) && (carritoCompras.length > 0)){
+  } else if ((tagIdMainCarritoCompras.childElementCount > 0) && (carritoCompras.length > 0)){
      //
      carritoCompras.forEach(articulo => {
           const tagInputCantidad = document.getElementById("idCarritoComprasCantidadInput"+articulo.id);
@@ -686,20 +660,30 @@ function ocultarCarritoCompras(e){
             articulo.totalArticulo = parseInt(tagInputCantidad.value)*parseInt(articulo.precio);
           }
         });
-     document.getElementById("idMainCarritoCompras").innerHTML=``;
-     document.getElementById("idTotalCarrito").innerHTML=``;
+     tagIdMainCarritoCompras.innerHTML=``;
+     const tagIdTotalCarrito = document.getElementById("idTotalCarrito");
+     //
+     (tagIdTotalCarrito) && (tagIdTotalCarrito.innerHTML=``);
+     //
   } else {
     crearMensajeDialog({tipo: "error",texto:"El carrito de compras esta vacio"})
  }
 }   
-//
+
 function vaciarCarritoCompras(e){
   e.preventDefault();
   localStorage.setItem("carritoComprasOculto","SI")
   //
   if (carritoCompras.length > 0) {
-     document.getElementById("idMainCarritoCompras").innerHTML=``;
-     document.getElementById("idTotalCarrito").innerHTML=``;
+     //
+     const tagIdMainCarritoCompras = document.getElementById("idMainCarritoCompras");
+     //
+     (tagIdMainCarritoCompras) && (tagIdMainCarritoCompras.innerHTML=``);
+     //
+     const tagIdTotalCarrito = document.getElementById("idTotalCarrito");
+     //
+     (tagIdTotalCarrito) && (tagIdTotalCarrito.innerHTML=``);
+     //
      carritoCompras.splice(0,carritoCompras.length);
      crearMensajeDialog({tipo: "exito", texto: "Se eliminaron los articulos del carrito"})
   }else{ 
@@ -707,13 +691,16 @@ function vaciarCarritoCompras(e){
   };
   localStorage.setItem("carritoCompras", JSON.stringify(carritoCompras));
 }   
-//
+
 function confirmarCarritoCompras(e){
+  //
   e.preventDefault();
   //
   (carritoCompras.length > 0) ? crearMensajeDialog({tipo: "exito", texto: "Se comfirmo la compra"}) 
                               : crearMensajeDialog({tipo: "error", texto: "El carrito de compras esta vacio"});
 }  
+//
+/////////////////////////////////////////////////////////////////////////////
 //
 const tagFormCrearArticulo = document.getElementById("idMainFormularioCrear");
 tagFormCrearArticulo.addEventListener("submit", cargarArticulo);
